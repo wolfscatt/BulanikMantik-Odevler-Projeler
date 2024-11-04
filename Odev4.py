@@ -39,6 +39,29 @@ class PiUyelikFonksiyonu(UyelikFonksiyonu):
             return S_fonksiyonu(u, self.c - self.b, self.c - self.b / 2, self.c)
         else:
             return 1 - S_fonksiyonu(u, self.c, self.c + self.b / 2, self.c + self.b)
+        
+
+    # Kuvvet işlemi
+    def kuvvet(self, u, n):
+        return self.hesapla(u) ** n
+    
+    # Derişme işlemi
+    def derisme(self, u):
+        uyelik_derecesi = self.hesapla(u)
+        return uyelik_derecesi ** 2
+    
+    # Genişleme işlemi
+    def genisleme(self, u):
+        uyelik_derecesi = self.hesapla(u)
+        return np.sqrt(uyelik_derecesi)
+    
+    # Yoğunlaşma işlemi
+    def yogunlasma(self, u, alpha):
+        uyelik_derecesi = self.hesapla(u)
+        if 0 <= uyelik_derecesi <= alpha:
+            return 2 * (uyelik_derecesi ** 2)
+        if alpha <= uyelik_derecesi <=1:
+            return 1 - 2 * ((1 - uyelik_derecesi) ** 2)
 
 # Üçgen Üyelik Fonksiyonu
 class UcgenUyelikFonksiyonu(UyelikFonksiyonu):
@@ -79,9 +102,29 @@ class YamukUyelikFonksiyonu(UyelikFonksiyonu):
 
 # Pi üyelik fonksiyonunu ayrı grafikle gösterme
 def pi_uyelik_grafik(u, x_range):
-    plt.figure(figsize=(10, 6))         # 10x6 boyutlarında bir figür, grafik oluşturur.
     pi_fonksiyon = PiUyelikFonksiyonu(20, 50)
+    plt.figure(figsize=(10, 6))         # 10x6 boyutlarında bir figür, grafik oluşturur.
+    
+    # Orijinal Pi üyelik fonksiyonu
     pi_fonksiyon.grafikte_goster(x_range, u, label="Pi Üyelik Fonksiyonu")
+    
+    # Kuvvet işlemi (örneğin kuvvet = 3)
+    y_kuvvet = [pi_fonksiyon.kuvvet(x, 3) for x in x_range]
+    plt.plot(x_range, y_kuvvet, label="Kuvvet İşlemi (n=3)", linestyle="-.")
+    
+    # Derişme işlemi
+    y_derisme = [pi_fonksiyon.derisme(x) for x in x_range]
+    plt.plot(x_range, y_derisme, label="Derişme İşlemi", linestyle="--")
+    
+    # Genişleme işlemi
+    y_genisleme = [pi_fonksiyon.genisleme(x) for x in x_range]
+    plt.plot(x_range, y_genisleme, label="Genişleme İşlemi", linestyle=":")
+    
+    # Yoğunlaşma işlemi (örneğin alpha = 0.5)
+    y_yogunlasma = [pi_fonksiyon.yogunlasma(x, 0.5) for x in x_range]
+    plt.plot(x_range, y_yogunlasma, label="Yoğunlaşma İşlemi (alpha=0.5)", linestyle="--", color="orange")
+
+    
     plt.xlabel('u')
     plt.ylabel('Üyelik Derecesi')
     plt.title(f'Pi Üyelik Fonksiyonu ve u={u} için üyelik derecesi')
